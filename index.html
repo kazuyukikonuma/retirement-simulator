@@ -3,17 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>退職後収支シミュレーター</title>
+<title>退職後収支シミュレーター v3</title>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body { font-family: 'Helvetica Neue', sans-serif; background: #f0f2f5; color: #1a1a2e; font-size: 13px; }
-
 .top { background: #1a1a2e; color: #fff; padding: 14px 20px; display: flex; justify-content: space-between; align-items: center; }
 .top-title { font-size: 15px; font-weight: 500; }
 .top-sub { font-size: 11px; color: #8899bb; margin-top: 2px; }
-
-.wrap { display: grid; grid-template-columns: 270px 1fr; gap: 0; min-height: calc(100vh - 50px); }
-
+.wrap { display: grid; grid-template-columns: 290px 1fr; gap: 0; min-height: calc(100vh - 50px); }
 .left { background: #fff; border-right: 1px solid #dde; padding: 16px; overflow-y: auto; }
 .sec { margin-bottom: 18px; }
 .sec-title { font-size: 10px; font-weight: 600; letter-spacing: .08em; color: #667; text-transform: uppercase; border-bottom: 1px solid #eee; padding-bottom: 5px; margin-bottom: 10px; }
@@ -22,42 +19,51 @@ body { font-family: 'Helvetica Neue', sans-serif; background: #f0f2f5; color: #1
 .field input, .field select { width: 100%; border: 1px solid #dde; border-radius: 4px; padding: 5px 8px; font-size: 12px; color: #1a1a2e; background: #f8f9fc; outline: none; }
 .field input:focus, .field select:focus { border-color: #4477cc; }
 .hint { font-size: 10px; color: #99a; margin-bottom: 8px; line-height: 1.5; }
-
 .delay-box { background: #f0f4ff; border: 1px solid #c7d5f8; border-radius: 6px; padding: 12px; margin-bottom: 10px; }
 .delay-box .sec-title { color: #3355aa; border-color: #c7d5f8; }
 .delay-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 .delay-result { margin-top: 8px; font-size: 11px; color: #3355aa; line-height: 1.7; background: #e8eeff; border-radius: 4px; padding: 6px 8px; }
-
+/* 運用設定パネル */
+.invest-box { background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 6px; padding: 12px; margin-bottom: 10px; }
+.invest-box .sec-title { color: #15803d; border-color: #bbf7d0; }
+.bucket-row { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 6px; }
+.bucket-label { font-size: 10px; font-weight: 600; margin-bottom: 4px; }
+.bucket-a { color: #1d4ed8; }
+.bucket-b { color: #7c3aed; }
+.bucket-c { color: #b45309; }
+.scenario-tabs { display: flex; gap: 4px; margin-bottom: 10px; flex-wrap: wrap; }
+.stab { font-size: 10px; padding: 3px 8px; border: 1px solid #dde; border-radius: 4px; cursor: pointer; background: #f8f9fc; color: #667; }
+.stab.active { background: #15803d; color: #fff; border-color: #15803d; }
 .right { padding: 16px; overflow-y: auto; }
-
-.cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 16px; }
+.cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 12px; }
 .card { background: #fff; border: 1px solid #dde; border-radius: 8px; padding: 12px 14px; }
 .card .lbl { font-size: 10px; color: #667; margin-bottom: 4px; }
-.card .val { font-size: 18px; font-weight: 600; }
+.card .val { font-size: 17px; font-weight: 600; }
 .card .sub { font-size: 10px; color: #99a; margin-top: 3px; }
-.green { color: #16a34a; }
-.red { color: #dc2626; }
-.blue { color: #2563eb; }
-.amber { color: #d97706; }
-.purple { color: #7c3aed; }
-
-.compare-bar { background: #fff; border: 1px solid #dde; border-radius: 8px; padding: 12px 16px; margin-bottom: 14px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.green { color: #16a34a; } .red { color: #dc2626; } .blue { color: #2563eb; }
+.amber { color: #d97706; } .purple { color: #7c3aed; } .teal { color: #0d9488; }
+.compare-bar { background: #fff; border: 1px solid #dde; border-radius: 8px; padding: 12px 16px; margin-bottom: 12px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 .compare-col .c-label { font-size: 10px; color: #667; font-weight: 600; letter-spacing: .05em; margin-bottom: 6px; }
 .compare-col .c-val { font-size: 15px; font-weight: 600; }
 .compare-col .c-sub { font-size: 10px; color: #99a; margin-top: 2px; }
-.compare-diff { grid-column: 1 / -1; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 4px; padding: 8px 10px; font-size: 11px; color: #15803d; }
-
-.chart-box { background: #fff; border: 1px solid #dde; border-radius: 8px; padding: 14px; margin-bottom: 14px; }
+.compare-diff { grid-column: 1/-1; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 4px; padding: 8px 10px; font-size: 11px; color: #15803d; }
+/* 運用シナリオ比較バー */
+.invest-compare { background: #fff; border: 1px solid #dde; border-radius: 8px; padding: 12px 16px; margin-bottom: 12px; }
+.invest-compare h3 { font-size: 12px; font-weight: 500; margin-bottom: 10px; color: #334; }
+.invest-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 8px; }
+.invest-cell { background: #f8f9fc; border-radius: 6px; padding: 10px; text-align: center; }
+.invest-cell .ic-label { font-size: 10px; color: #667; margin-bottom: 4px; }
+.invest-cell .ic-val { font-size: 15px; font-weight: 600; }
+.invest-cell .ic-sub { font-size: 10px; color: #99a; margin-top: 3px; }
+.chart-box { background: #fff; border: 1px solid #dde; border-radius: 8px; padding: 14px; margin-bottom: 12px; }
 .chart-box h3 { font-size: 12px; font-weight: 500; margin-bottom: 4px; color: #334; }
-.chart-tabs { display: flex; gap: 6px; margin-bottom: 10px; }
+.chart-tabs { display: flex; gap: 6px; margin-bottom: 10px; flex-wrap: wrap; }
 .chart-tab { font-size: 11px; padding: 4px 10px; border: 1px solid #dde; border-radius: 4px; cursor: pointer; background: #f8f9fc; color: #667; }
 .chart-tab.active { background: #1a1a2e; color: #fff; border-color: #1a1a2e; }
-
 .tbl-box { background: #fff; border: 1px solid #dde; border-radius: 8px; overflow: hidden; margin-bottom: 14px; }
 .tbl-head { padding: 10px 14px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; }
 .tbl-head h3 { font-size: 12px; font-weight: 500; }
 .tbl-head span { font-size: 10px; color: #99a; }
-
 table { width: 100%; border-collapse: collapse; }
 th { background: #f5f6fa; font-size: 10px; font-weight: 600; color: #667; text-align: right; padding: 7px 10px; border-bottom: 1px solid #eee; white-space: nowrap; }
 th:first-child { text-align: left; }
@@ -66,25 +72,19 @@ td:first-child { text-align: left; color: #1a1a2e; }
 tr:last-child td { border-bottom: none; }
 tr:hover td { background: #f8f9fc; }
 .ph-row td { background: #f0f2f5; font-size: 10px; font-weight: 600; color: #667; text-align: left; padding: 5px 10px; letter-spacing: .05em; }
-
 .tag { display: inline-block; font-size: 9px; padding: 1px 5px; border-radius: 3px; margin-left: 3px; }
-.tag-b { background: #dbeafe; color: #1d4ed8; }
-.tag-g { background: #dcfce7; color: #15803d; }
-.tag-r { background: #fee2e2; color: #b91c1c; }
-.tag-p { background: #ede9fe; color: #6d28d9; }
-
-.note { background: #fffbeb; border: 1px solid #fcd34d; border-radius: 6px; padding: 10px 12px; margin-bottom: 14px; font-size: 11px; color: #92400e; line-height: 1.7; }
-
-::-webkit-scrollbar { width: 4px; }
-::-webkit-scrollbar-thumb { background: #ccd; border-radius: 2px; }
+.tag-b { background: #dbeafe; color: #1d4ed8; } .tag-g { background: #dcfce7; color: #15803d; }
+.tag-r { background: #fee2e2; color: #b91c1c; } .tag-p { background: #ede9fe; color: #6d28d9; }
+.note { background: #fffbeb; border: 1px solid #fcd34d; border-radius: 6px; padding: 10px 12px; margin-bottom: 12px; font-size: 11px; color: #92400e; line-height: 1.7; }
+::-webkit-scrollbar { width: 4px; } ::-webkit-scrollbar-thumb { background: #ccd; border-radius: 2px; }
+input[type=range] { width: 100%; accent-color: #15803d; }
 </style>
 </head>
 <body>
-
 <div class="top">
   <div>
     <div class="top-title">退職後収支シミュレーター</div>
-    <div class="top-sub">小沼和幸 — 繰下げ受給比較対応版 v2（税金修正済）</div>
+    <div class="top-sub">小沼和幸 — v3（運用シミュレーション・税金完全版）</div>
   </div>
   <div id="ageLabel" style="background:#334477;padding:4px 12px;border-radius:4px;font-size:12px;font-family:monospace">退職時 57歳</div>
 </div>
@@ -97,14 +97,15 @@ tr:hover td { background: #f8f9fc; }
     <div class="field"><label>退職年</label><input type="number" id="retireYear" value="2028" min="2026" max="2033"></div>
     <div class="field"><label>手持ちキャッシュ（万円）</label><input type="number" id="cash" value="5000"></div>
     <div class="field"><label>退職一時金（万円）</label><input type="number" id="severance" value="270"></div>
+    <div class="field"><label>保険ファンド現在残高（万円）</label><input type="number" id="fundNow" value="440"></div>
+    <div class="hint">※保険ファンドは退職時に解約・現金化（月3万×退職まで積立）</div>
     <div class="field"><label>企業年金CB 受取方法</label>
       <select id="cbMode">
         <option value="annuity">年金受取（60歳〜5年・年300万）</option>
         <option value="lump">一時金受取（60歳時・退職所得扱い）</option>
       </select>
     </div>
-    <div class="field"><label>企業型DC 残高（万円・退職時点）</label>
-      <input type="number" id="dcBalance" value="510"></div>
+    <div class="field"><label>企業型DC 残高（万円・退職時点）</label><input type="number" id="dcBalance" value="510"></div>
     <div class="field"><label>企業型DC 受取方法</label>
       <select id="dcMode">
         <option value="lump">一時金受取（60歳時・退職所得扱い）</option>
@@ -121,53 +122,41 @@ tr:hover td { background: #f8f9fc; }
     <div class="field"><label>③個人年金A・住友（60歳〜10年）</label><input type="number" id="p3" value="119"></div>
     <div class="field"><label>④個人年金B・住友（65歳〜10年）</label><input type="number" id="p4" value="62"></div>
     <div class="field"><label>⑤厚生年金・陽子（基準額）</label><input type="number" id="p5base" value="94"></div>
-    <div class="field"><label>⑥個人年金・大樹/陽子（65歳〜10年）</label><input type="number" id="p6" value="75"></div>
+    <div class="field"><label>⑥個人年金・大樹（陽子・65歳〜10年）</label><input type="number" id="p6" value="75"></div>
   </div>
 
-  <!-- 個人年金 払込保険料設定 -->
   <div class="sec">
     <div class="sec-title">個人年金 払込保険料（税計算用）</div>
-    <div class="hint">受取総額に占める払込保険料の割合を入力。雑所得の必要経費として控除されます。</div>
+    <div class="hint">雑所得の必要経費控除に使用します。</div>
     <div class="field"><label>③個人年金A 払込総額（万円）</label><input type="number" id="p3paid" value="950"></div>
     <div class="field"><label>③個人年金A 受取総額（万円）</label><input type="number" id="p3total" value="1190"></div>
     <div class="field"><label>④個人年金B 払込総額（万円）</label><input type="number" id="p4paid" value="500"></div>
     <div class="field"><label>④個人年金B 受取総額（万円）</label><input type="number" id="p4total" value="620"></div>
-    <div class="field"><label>⑥大樹/陽子 払込総額（万円）</label><input type="number" id="p6paid" value="600"></div>
-    <div class="field"><label>⑥大樹/陽子 受取総額（万円）</label><input type="number" id="p6total" value="750"></div>
+    <div class="field"><label>⑥大樹（陽子）払込総額（万円）</label><input type="number" id="p6paid" value="600"></div>
+    <div class="field"><label>⑥大樹（陽子）受取総額（万円）</label><input type="number" id="p6total" value="750"></div>
   </div>
 
-  <!-- 繰下げ設定 -->
   <div class="delay-box">
     <div class="sec-title">繰下げ受給設定</div>
     <div class="hint">65歳基準。1ヶ月繰下げごとに+0.7%増額（最大75歳・+84%）</div>
     <div class="delay-row">
       <div class="field"><label>和幸 受給開始年齢</label>
         <select id="kazDelay">
-          <option value="65">65歳（基準）</option>
-          <option value="66">66歳（+8.4%）</option>
-          <option value="67">67歳（+16.8%）</option>
-          <option value="68">68歳（+25.2%）</option>
-          <option value="69">69歳（+33.6%）</option>
-          <option value="70" selected>70歳（+42.0%）</option>
-          <option value="71">71歳（+50.4%）</option>
-          <option value="72">72歳（+58.8%）</option>
-          <option value="73">73歳（+67.2%）</option>
-          <option value="74">74歳（+75.6%）</option>
+          <option value="65">65歳（基準）</option><option value="66">66歳（+8.4%）</option>
+          <option value="67">67歳（+16.8%）</option><option value="68">68歳（+25.2%）</option>
+          <option value="69">69歳（+33.6%）</option><option value="70" selected>70歳（+42.0%）</option>
+          <option value="71">71歳（+50.4%）</option><option value="72">72歳（+58.8%）</option>
+          <option value="73">73歳（+67.2%）</option><option value="74">74歳（+75.6%）</option>
           <option value="75">75歳（+84.0%）</option>
         </select>
       </div>
       <div class="field"><label>陽子 受給開始年齢</label>
         <select id="yokoDelay">
-          <option value="65" selected>65歳（基準）</option>
-          <option value="66">66歳（+8.4%）</option>
-          <option value="67">67歳（+16.8%）</option>
-          <option value="68">68歳（+25.2%）</option>
-          <option value="69">69歳（+33.6%）</option>
-          <option value="70">70歳（+42.0%）</option>
-          <option value="71">71歳（+50.4%）</option>
-          <option value="72">72歳（+58.8%）</option>
-          <option value="73">73歳（+67.2%）</option>
-          <option value="74">74歳（+75.6%）</option>
+          <option value="65" selected>65歳（基準）</option><option value="66">66歳（+8.4%）</option>
+          <option value="67">67歳（+16.8%）</option><option value="68">68歳（+25.2%）</option>
+          <option value="69">69歳（+33.6%）</option><option value="70">70歳（+42.0%）</option>
+          <option value="71">71歳（+50.4%）</option><option value="72">72歳（+58.8%）</option>
+          <option value="73">73歳（+67.2%）</option><option value="74">74歳（+75.6%）</option>
           <option value="75">75歳（+84.0%）</option>
         </select>
       </div>
@@ -178,15 +167,17 @@ tr:hover td { background: #f8f9fc; }
   <div class="sec">
     <div class="sec-title">不動産収入</div>
     <div class="field"><label>横浜マンション月額（万円）※2032年〜</label><input type="number" id="rent" value="15"></div>
-    <div class="field"><label>不動産経費率（%）※管理費・固定資産税等</label><input type="number" id="rentExpRate" value="20" min="0" max="80"></div>
+    <div class="field"><label>不動産経費率（%）</label><input type="number" id="rentExpRate" value="20" min="0" max="80"></div>
   </div>
 
   <div class="sec">
     <div class="sec-title">支出（月額・万円）</div>
     <div class="field"><label>生活費（クレカ＋現金）</label><input type="number" id="living" value="18.2" step="0.1"></div>
     <div class="field"><label>管理費・光熱費・税金</label><input type="number" id="fixedCost" value="4.0" step="0.1"></div>
-    <div class="field"><label>住友生命・健康（終身払込）</label><input type="number" id="insHealth" value="6.56" step="0.01"></div>
-    <div class="field"><label>大樹生命・和幸（掛け捨て）</label><input type="number" id="insDaiju" value="1.75" step="0.01"></div>
+    <div class="field"><label>住友生命・健康（リタイア後・月額）</label><input type="number" id="insHealth" value="1.0" step="0.01"></div>
+    <div class="hint">※リタイア前：月6.56万（健康3.56＋ファンド3.0）→リタイア後：月1.0万（健康保険のみ）</div>
+    <div class="field"><label>大樹生命・陽子（陽子60歳前・月額）</label><input type="number" id="insDaijuPre" value="1.75" step="0.01"></div>
+    <div class="field"><label>大樹生命・陽子（陽子60歳以降・月額）</label><input type="number" id="insDaijuPost" value="1.0" step="0.01"></div>
     <div class="hint">※住友年金A/B払込は〜2030年12月まで自動計上（月4.5万）<br>※オリコローン〜2029年11月まで自動計上（月13.64万）</div>
   </div>
 
@@ -197,29 +188,80 @@ tr:hover td { background: #f8f9fc; }
     <div class="field"><label><input type="checkbox" id="chkCare" checked> 介護保険</label></div>
   </div>
 
-  <button onclick="calc()" style="width:100%;padding:10px;background:#1a1a2e;color:#fff;border:none;border-radius:6px;font-size:13px;cursor:pointer;font-weight:500">▶ 再計算</button>
+  <!-- 運用設定 -->
+  <div class="invest-box">
+    <div class="sec-title">💰 資産運用設定</div>
+    <div class="field"><label>生活防衛資金（万円・運用しない）</label><input type="number" id="defenseAmt" value="1000"></div>
+    <div class="hint">残りを3バケットに振り分けて運用します。</div>
 
+    <div style="margin-bottom:8px">
+      <div class="bucket-label bucket-a">🔵 安全資産（国債・定期預金）</div>
+      <div class="bucket-row">
+        <div class="field"><label>金額（万円）</label><input type="number" id="bucketA_amt" value="1000"></div>
+        <div class="field"><label>年利（%）</label><input type="number" id="bucketA_rate" value="0.8" step="0.1" min="0" max="10"></div>
+      </div>
+    </div>
+    <div style="margin-bottom:8px">
+      <div class="bucket-label bucket-b">🟣 中間資産（バランスファンド）</div>
+      <div class="bucket-row">
+        <div class="field"><label>金額（万円）</label><input type="number" id="bucketB_amt" value="1500"></div>
+        <div class="field"><label>年利（%）</label><input type="number" id="bucketB_rate" value="3.0" step="0.1" min="0" max="15"></div>
+      </div>
+    </div>
+    <div style="margin-bottom:8px">
+      <div class="bucket-label bucket-c">🟠 成長資産（株式インデックス）</div>
+      <div class="bucket-row">
+        <div class="field"><label>金額（万円）</label><input type="number" id="bucketC_amt" value="1000"></div>
+        <div class="field"><label>年利（%）</label><input type="number" id="bucketC_rate" value="5.0" step="0.1" min="0" max="20"></div>
+      </div>
+    </div>
+
+    <div style="font-size:10px;color:#667;margin-bottom:8px">
+      NISA枠（年360万まで非課税）を優先利用。超過分の運用益は20%課税。
+      取崩し順：成長→中間→安全。
+    </div>
+
+    <div class="hint">プリセット：</div>
+    <div class="scenario-tabs">
+      <div class="stab" onclick="applyPreset('none')">運用なし</div>
+      <div class="stab" onclick="applyPreset('conservative')">保守型</div>
+      <div class="stab active" onclick="applyPreset('standard')">標準型</div>
+      <div class="stab" onclick="applyPreset('aggressive')">積極型</div>
+    </div>
+    <div id="investSummary" style="font-size:11px;color:#15803d;background:#f0fdf4;border-radius:4px;padding:6px 8px;line-height:1.7"></div>
+  </div>
+
+  <button onclick="calc()" style="width:100%;padding:10px;background:#1a1a2e;color:#fff;border:none;border-radius:6px;font-size:13px;cursor:pointer;font-weight:500">▶ 再計算</button>
 </div>
 
 <div class="right">
 
   <div class="cards">
-    <div class="card"><div class="lbl">退職時 総資産</div><div class="val blue" id="s1">—</div><div class="sub">キャッシュ合計</div></div>
+    <div class="card"><div class="lbl">退職時 総資産</div><div class="val blue" id="s1">—</div><div class="sub">キャッシュ＋ファンド解約</div></div>
     <div class="card"><div class="lbl">収入ゼロ期間</div><div class="val amber" id="s2">—</div><div class="sub">退職〜最初の年金</div></div>
     <div class="card"><div class="lbl">年金ピーク月収（税引後）</div><div class="val green" id="s3">—</div><div class="sub">年金フル稼働時</div></div>
-    <div class="card"><div class="lbl">85歳時 推定残高</div><div class="val" id="s4">—</div><div class="sub">キャッシュフロー累計</div></div>
+    <div class="card"><div class="lbl">85歳時残高（運用込）</div><div class="val teal" id="s4">—</div><div class="sub">現在の設定</div></div>
   </div>
 
-  <div class="compare-bar" id="compareBar">
+  <!-- 運用シナリオ比較 -->
+  <div class="invest-compare">
+    <h3>📊 運用シナリオ別 85歳時残高比較</h3>
+    <div class="invest-grid">
+      <div class="invest-cell"><div class="ic-label">運用なし（0%）</div><div class="ic-val" id="sc0">—</div><div class="ic-sub">ベースライン</div></div>
+      <div class="invest-cell" style="background:#eff6ff"><div class="ic-label">保守型（〜1%）</div><div class="ic-val blue" id="sc1">—</div><div class="ic-sub">国債・定期</div></div>
+      <div class="invest-cell" style="background:#f0fdf4"><div class="ic-label">標準型（〜3%）</div><div class="ic-val green" id="sc2">—</div><div class="ic-sub">バランスファンド</div></div>
+      <div class="invest-cell" style="background:#faf5ff"><div class="ic-label">積極型（〜5%）</div><div class="ic-val purple" id="sc3">—</div><div class="ic-sub">株式インデックス</div></div>
+    </div>
+  </div>
+
+  <div class="compare-bar">
     <div class="compare-col">
       <div class="c-label">▼ 65歳受給（基準）</div>
-      <div class="c-val blue" id="cmp65-85">—</div>
-      <div class="c-sub">85歳時残高</div>
+      <div class="c-val blue" id="cmp65-85">—</div><div class="c-sub">85歳時残高</div>
     </div>
     <div class="compare-col">
       <div class="c-label" id="cmpDelayLabel">▼ 繰下げ受給</div>
-      <div class="c-val purple" id="cmpDelay-85">—</div>
-      <div class="c-sub">85歳時残高</div>
+      <div class="c-val purple" id="cmpDelay-85">—</div><div class="c-sub">85歳時残高</div>
     </div>
     <div class="compare-diff" id="cmpDiff">—</div>
   </div>
@@ -227,17 +269,14 @@ tr:hover td { background: #f8f9fc; }
   <div class="note" id="noteBox"></div>
 
   <div class="chart-box">
-    <h3>年間収入（税引前） / 支出（税込） / 累積残高</h3>
+    <h3>年間収支 / 累積残高（現金＋運用資産）</h3>
     <div class="chart-tabs">
       <div class="chart-tab active" id="tab-current" onclick="switchTab('current')">現在の設定</div>
-      <div class="chart-tab" id="tab-compare" onclick="switchTab('compare')">65歳 vs 繰下げ 比較</div>
+      <div class="chart-tab" id="tab-compare" onclick="switchTab('compare')">65歳 vs 繰下げ</div>
+      <div class="chart-tab" id="tab-invest" onclick="switchTab('invest')">運用シナリオ比較</div>
     </div>
-    <div style="position:relative;height:220px"><canvas id="chart"></canvas></div>
-    <div style="display:flex;gap:16px;margin-top:8px;font-size:11px;color:#667" id="chartLegend">
-      <span><span style="display:inline-block;width:10px;height:10px;background:#16a34a;border-radius:2px;margin-right:4px"></span>収入</span>
-      <span><span style="display:inline-block;width:10px;height:10px;background:#dc2626;border-radius:2px;margin-right:4px"></span>支出（税込）</span>
-      <span><span style="display:inline-block;width:10px;height:10px;background:#2563eb;border-radius:2px;margin-right:4px"></span>累積残高（右軸）</span>
-    </div>
+    <div style="position:relative;height:240px"><canvas id="chart"></canvas></div>
+    <div style="display:flex;gap:16px;margin-top:8px;font-size:11px;color:#667;flex-wrap:wrap" id="chartLegend"></div>
   </div>
 
   <div class="tbl-box">
@@ -245,713 +284,593 @@ tr:hover td { background: #f8f9fc; }
     <table>
       <thead>
         <tr>
-          <th></th><th>年度</th><th>年齢</th><th>収入計</th><th>支出計</th><th>年間収支</th><th>累積残高</th>
-          <th style="color:#7c3aed">累積残高(65歳)</th><th>備考</th>
+          <th></th><th>年度</th><th>年齢</th><th>収入計</th><th>支出計</th><th>年間収支</th>
+          <th>現金残高</th><th style="color:#0d9488">運用資産</th><th style="color:#0d9488">合計残高</th>
+          <th style="color:#7c3aed">合計(65歳)</th><th>備考</th>
         </tr>
       </thead>
       <tbody id="tbody"></tbody>
     </table>
   </div>
-
 </div>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script>
 var myChart = null;
+var currentTab = 'current';
+var lastRows65 = [], lastRowsDelay = [];
 
 // ============================================================
-// 税金計算ユーティリティ
+// 税金計算
 // ============================================================
+function incomeTax(t) {
+  if(t<=0)return 0;
+  if(t<=195)return t*0.05;
+  if(t<=330)return 9.75+(t-195)*0.10;
+  if(t<=695)return 23.25+(t-330)*0.20;
+  if(t<=900)return 96.25+(t-695)*0.23;
+  if(t<=1800)return 143.4+(t-900)*0.33;
+  if(t<=4000)return 440.4+(t-1800)*0.40;
+  return 1320.4+(t-4000)*0.45;
+}
+function resTax(t){return Math.max(0,t)*0.10;}
+function pensionDeduction(inc){
+  if(inc<=0)return 0;
+  if(inc<=330)return 110;
+  if(inc<=410)return inc*0.25+27.5;
+  if(inc<=770)return inc*0.15+68.5;
+  if(inc<=1000)return inc*0.05+145.5;
+  return 195.5;
+}
+function retirementTax(lump,workYears){
+  if(lump<=0)return{deduction:0,taxable:0,tax:0};
+  var ded=workYears<=20?workYears*40:800+(workYears-20)*70;
+  var taxable=Math.max(0,(lump-ded))*0.5;
+  return{deduction:Math.round(ded),taxable:Math.round(taxable),tax:Math.round(incomeTax(taxable)+resTax(taxable))};
+}
+function privateAnnuityMisc(annual,paid,total){
+  if(annual<=0)return 0;
+  if(total<=0)return annual;
+  return Math.max(0,annual*(1-paid/total));
+}
+function comprehensiveTax(pubPension,privMisc,realEstate){
+  var ded=pensionDeduction(pubPension);
+  var pensionMisc=Math.max(0,pubPension-ded);
+  var total=pensionMisc+privMisc+realEstate;
+  var taxable=Math.max(0,total-48);
+  return Math.round(incomeTax(taxable)+resTax(taxable));
+}
+function delayRate(age){return 1+(age-65)*12*0.007;}
 
-/**
- * 所得税（累進）の計算（万円単位）
- * 復興特別所得税（2.1%加算）は省略
- */
-function calcIncomeTax(taxableIncome) {
-  if (taxableIncome <= 0) return 0;
-  var t = taxableIncome;
-  var tax = 0;
-  if (t <= 195)       tax = t * 0.05;
-  else if (t <= 330)  tax = 9.75 + (t - 195) * 0.10;
-  else if (t <= 695)  tax = 23.25 + (t - 330) * 0.20;
-  else if (t <= 900)  tax = 96.25 + (t - 695) * 0.23;
-  else if (t <= 1800) tax = 143.4 + (t - 900) * 0.33;
-  else if (t <= 4000) tax = 440.4 + (t - 1800) * 0.40;
-  else                tax = 1320.4 + (t - 4000) * 0.45;
-  return tax;
+// ============================================================
+// 運用益の税計算（NISA考慮）
+// ============================================================
+// NISA枠：年360万まで非課税（成長投資枠240万＋つみたて120万）
+// 取崩し分は非課税とみなす（簡易）
+function investTax(gain, nisaUsed){
+  // nisaUsedは当年の非課税利用額
+  var taxable = Math.max(0, gain - Math.max(0, 360 - nisaUsed));
+  return Math.round(taxable * 0.20315); // 20.315%
 }
 
-/**
- * 住民税（一律10%）
- */
-function calcResidentTax(taxableIncome) {
-  return Math.max(0, taxableIncome) * 0.10;
-}
+// ============================================================
+// 運用付きシミュレーション
+// ============================================================
+function val(id){return parseFloat(document.getElementById(id).value)||0;}
+function chk(id){return document.getElementById(id).checked;}
+function sel(id){return parseInt(document.getElementById(id).value);}
 
-/**
- * 公的年金等控除（65歳以上）
- * ※65歳未満は別テーブルだが、このシミュレーターでは公的年金受給開始は65歳以上のみ
- * 2020年改正後の値
- */
-function publicPensionDeduction(pensionIncome) {
-  if (pensionIncome <= 0) return 0;
-  if (pensionIncome <= 330)       return 110;
-  else if (pensionIncome <= 410)  return pensionIncome * 0.25 + 27.5;
-  else if (pensionIncome <= 770)  return pensionIncome * 0.15 + 68.5;
-  else if (pensionIncome <= 1000) return pensionIncome * 0.05 + 145.5;
-  else                            return 195.5;
-}
+function calcRows(kazPensionStartAge, yokoPensionStartAge, investConfig){
+  var retireYear = parseInt(document.getElementById('retireYear').value);
+  var cashInput  = val('cash');
+  var severance  = val('severance');
+  var fundNow    = val('fundNow');
+  var cbMode     = document.getElementById('cbMode').value;
+  var dcBalance  = val('dcBalance');
+  var dcMode     = document.getElementById('dcMode').value;
+  var p1base=val('p1base'),p2=val('p2'),p3=val('p3'),p4=val('p4');
+  var p5base=val('p5base'),p6=val('p6');
+  var p3paid=val('p3paid'),p3total=val('p3total');
+  var p4paid=val('p4paid'),p4total=val('p4total');
+  var p6paid=val('p6paid'),p6total=val('p6total');
+  var rent=val('rent'),rentExpRate=val('rentExpRate')/100;
+  var living=val('living'),fixedCost=val('fixedCost');
+  var insHealth=val('insHealth');           // リタイア後の住友（月1万）
+  var insDaijuPre=val('insDaijuPre');      // 大樹・陽子60歳前
+  var insDaijuPost=val('insDaijuPost');    // 大樹・陽子60歳以降
 
-/**
- * 個人年金の雑所得計算
- * 雑所得 = 年金収入 - 必要経費
- * 必要経費 = 年間受取額 × (払込保険料総額 / 受取総額)
- */
-function privateAnnuityMiscIncome(annualReceipt, paidTotal, receiptTotal) {
-  if (annualReceipt <= 0) return 0;
-  if (receiptTotal <= 0) return annualReceipt; // データ未入力時は全額課税
-  var ratio = Math.min(1, paidTotal / receiptTotal);
-  var necessary = annualReceipt * ratio;
-  return Math.max(0, annualReceipt - necessary);
-}
+  var KAZ_BIRTH=1971, YOKO_BIRTH=1966;
+  var kaz60=2031, kaz65=2036, yoko65=2031;
+  var YOKO60=YOKO_BIRTH+60; // 2026年
+  var WORK_YEARS=35;
 
-/**
- * 退職所得税計算
- * 退職所得 = (一時金 - 退職所得控除) × 0.5
- * 退職所得控除 = 勤続20年以下: 40万×年数, 超: 800万 + 70万×(年数-20)
- */
-function calcRetirementTax(lumpSum, workYears) {
-  if (lumpSum <= 0) return { deduction: 0, taxable: 0, tax: 0 };
-  var deduction = workYears <= 20
-    ? workYears * 40
-    : 800 + (workYears - 20) * 70;
-  var taxable = Math.max(0, (lumpSum - deduction)) * 0.5;
-  var incomeTax = calcIncomeTax(taxable);
-  var residentTax = calcResidentTax(taxable);
-  return {
-    deduction: Math.round(deduction),
-    taxable: Math.round(taxable),
-    tax: Math.round(incomeTax + residentTax)
-  };
-}
+  // 保険ファンド：退職時に解約（2026年3月から退職年末まで月3万積立）
+  var fundMonths = Math.max(0, (retireYear - 2026)*12 + 9); // 2026年4月〜退職年末
+  var fundAtRetire = Math.round(fundNow + fundMonths * 3);
 
-/**
- * 総合課税（年金雑所得 + 不動産所得の合算）の所得税・住民税計算
- * 基礎控除: 48万円（所得税）/ 43万円（住民税）を簡易的に48万で統一
- * @param publicPension  公的年金等（厚生年金・企業年金CB年金・DC年金）の合計年額
- * @param privateAnnuity 個人年金の雑所得（必要経費控除後）
- * @param realEstate     不動産所得（経費控除後）
- * @param age            年齢
- */
-function calcComprehensiveTax(publicPension, privateAnnuity, realEstate, age) {
-  if (publicPension + privateAnnuity + realEstate <= 0) return { tax: 0, detail: {} };
+  var kazActualStart = KAZ_BIRTH + kazPensionStartAge;
+  var yokoActualStart = YOKO_BIRTH + yokoPensionStartAge;
+  var p1actual = Math.round(p1base * delayRate(kazPensionStartAge));
+  var p5actual = Math.round(p5base * delayRate(yokoPensionStartAge));
 
-  // ① 公的年金等控除
-  var pensionDeduction = publicPensionDeduction(publicPension);
-  var pensionMiscIncome = Math.max(0, publicPension - pensionDeduction);
+  var cbLump = cbMode==='lump' ? p2*5 : 0;
+  var dcLump = dcMode==='lump' ? dcBalance : 0;
+  var lumpTotal = cbLump + dcLump;
+  var retTaxResult = retirementTax(lumpTotal, WORK_YEARS);
 
-  // ② 個人年金雑所得（呼び出し元で計算済みの値を受け取る）
-  var privateMiscIncome = privateAnnuity;
+  // 初期資産
+  var initCash = cashInput + severance + fundAtRetire;
 
-  // ③ 不動産所得
-  var realEstateIncome = realEstate;
+  // 運用設定
+  var doInvest = investConfig && investConfig.enabled;
+  var defense  = doInvest ? (investConfig.defense || 0) : 0;
+  var buckets  = doInvest ? investConfig.buckets : [];
 
-  // ④ 合計所得 - 基礎控除48万
-  var totalIncome = pensionMiscIncome + privateMiscIncome + realEstateIncome;
-  var basicDeduction = 48;
-  var taxableIncome = Math.max(0, totalIncome - basicDeduction);
+  // 運用資産の初期化（退職時）
+  var investAsset = 0;
+  if(doInvest){
+    buckets.forEach(function(b){ investAsset += b.amt; });
+  }
+  var cashBalance = initCash - (doInvest ? (defense + investAsset) : 0);
+  if(cashBalance < 0){ cashBalance = 0; } // 安全弁
 
-  var incomeTax  = calcIncomeTax(taxableIncome);
-  var residentTax = calcResidentTax(taxableIncome);
-  var totalTax = incomeTax + residentTax;
+  var rows = [];
+  var firstIncomeYear = null;
+  var peakNetMonthly = 0;
 
-  return {
-    tax: Math.round(totalTax),
-    detail: {
-      publicPension: Math.round(publicPension),
-      pensionDeduction: Math.round(pensionDeduction),
-      pensionMiscIncome: Math.round(pensionMiscIncome),
-      privateMiscIncome: Math.round(privateMiscIncome),
-      realEstateIncome: Math.round(realEstateIncome),
-      totalIncome: Math.round(totalIncome),
-      basicDeduction: basicDeduction,
-      taxableIncome: Math.round(taxableIncome),
-      incomeTax: Math.round(incomeTax),
-      residentTax: Math.round(residentTax)
+  for(var y=retireYear; y<=KAZ_BIRTH+90; y++){
+    var age = y-KAZ_BIRTH;
+    var wifeAge = y-YOKO_BIRTH;
+    if(age>90)break;
+
+    var income=0, pubPension=0, p3inc=0, p4inc=0, p6inc=0, rentGross=0;
+
+    // CB
+    if(cbMode==='annuity'){if(y>=kaz60&&y<kaz60+5){income+=p2;pubPension+=p2;}}
+    else{if(y===kaz60){income+=cbLump;}}
+    // DC
+    if(dcMode==='lump'){if(y===kaz60){income+=dcLump;}}
+    else{var dca=Math.round(dcBalance/5);if(y>=kaz60&&y<kaz60+5){income+=dca;pubPension+=dca;}}
+    // 個人年金A
+    if(y>=kaz60&&y<kaz60+10){income+=p3;p3inc=p3;}
+    // 個人年金B
+    if(y>=kaz65&&y<kaz65+10){income+=p4;p4inc=p4;}
+    // 厚生年金・和幸
+    if(y>=kazActualStart){income+=p1actual;pubPension+=p1actual;}
+    // 厚生年金・陽子
+    if(y>=yokoActualStart){income+=p5actual;pubPension+=p5actual;}
+    // 大樹・陽子（65歳〜10年）
+    if(y>=yoko65&&y<yoko65+10){income+=p6;p6inc=p6;}
+    // 横浜賃料
+    if(y>=2032){rentGross=rent*12;income+=rentGross;}
+    if(income>0&&firstIncomeYear===null)firstIncomeYear=y;
+
+    // ── 支出 ──
+    var expense=0, expDetail=[];
+
+    // 生活費
+    expense+=(living+fixedCost)*12;
+    expDetail.push({lbl:'生活費',amt:Math.round(living*12)});
+    expDetail.push({lbl:'管理費・光熱費・税金',amt:Math.round(fixedCost*12)});
+
+    // 住友生命：リタイア後は月insHealth（デフォルト1万）
+    expense+=insHealth*12;
+    expDetail.push({lbl:'住友生命・健康（リタイア後）',amt:Math.round(insHealth*12)});
+
+    // 大樹生命・陽子：60歳（2026年）以降は月insDaijuPost
+    var daijuAmt = (y >= YOKO60) ? insDaijuPost : insDaijuPre;
+    expense+=daijuAmt*12;
+    expDetail.push({lbl:'大樹生命・陽子（'+(y>=YOKO60?'60歳以降':'60歳前')+'）',amt:Math.round(daijuAmt*12)});
+
+    // 個人年金払込（〜2030）
+    if(y<=2030){expense+=4.5*12;expDetail.push({lbl:'住友年金A/B払込',amt:Math.round(4.5*12)});}
+    // オリコローン
+    if(y<2029){expense+=13.64*12;expDetail.push({lbl:'オリコローン',amt:Math.round(13.64*12)});}
+    else if(y===2029){expense+=13.64*11;expDetail.push({lbl:'オリコローン（11ヶ月）',amt:Math.round(13.64*11)});}
+
+    // NHI
+    if(chk('chkNHI')&&y>=retireYear){
+      var nhiBase=(y===retireYear)?700:(y===retireYear+1)?500:Math.max(income,33);
+      var nhi=Math.round(Math.min(Math.max(0,nhiBase-43)*0.09+7,83)*10)/10;
+      expense+=nhi;expDetail.push({lbl:'国民健康保険',amt:Math.round(nhi)});
     }
+    // 国民年金
+    if(chk('chkNP')&&y>=retireYear&&age<60){expense+=1.7*12;expDetail.push({lbl:'国民年金',amt:Math.round(1.7*12)});}
+    // 介護保険
+    if(chk('chkCare')&&y>=retireYear&&age>=40){var ca=age<65?8:6;expense+=ca;expDetail.push({lbl:'介護保険',amt:ca});}
+
+    // 退職所得税（60歳・一時金年）
+    var retTax=0;
+    if(y===kaz60&&lumpTotal>0){
+      retTax=retTaxResult.tax;
+      expDetail.push({lbl:'退職所得税・住民税（控除後課税所得'+retTaxResult.taxable+'万）',amt:retTax});
+      expense+=retTax;
+    }
+
+    // 総合課税
+    var p3misc=privateAnnuityMisc(p3inc,p3paid,p3total);
+    var p4misc=privateAnnuityMisc(p4inc,p4paid,p4total);
+    var p6misc=privateAnnuityMisc(p6inc,p6paid,p6total);
+    var re=Math.max(0,rentGross*(1-rentExpRate));
+    var compTax=comprehensiveTax(pubPension,p3misc+p4misc+p6misc,re);
+    if(compTax>0){
+      expDetail.push({lbl:'所得税・住民税（年金・不動産所得・概算）',amt:compTax});
+      expense+=compTax;
+    }
+
+    // ── 運用益計算 ──
+    var investGain=0, investTaxAmt=0, nisaUsed=0;
+    if(doInvest){
+      buckets.forEach(function(b){
+        if(b.amt>0){
+          var gain=b.amt*b.rate/100;
+          // NISA枠（簡易：残枠があれば非課税）
+          var nisaRoom=Math.max(0,360-nisaUsed);
+          var taxableGain=Math.max(0,gain-nisaRoom);
+          var taxFree=Math.min(gain,nisaRoom);
+          nisaUsed+=taxFree;
+          var tax=Math.round(taxableGain*0.20315);
+          investGain+=gain;
+          investTaxAmt+=tax;
+          b.amt+=gain-tax; // 複利：税引後を再投資
+        }
+      });
+      investGain=Math.round(investGain);
+      investTaxAmt=Math.round(investTaxAmt);
+    }
+
+    // ── キャッシュフロー ──
+    var netCF = income - expense;
+    cashBalance += netCF;
+
+    // 不足時は運用資産から取崩し（成長→中間→安全の順）
+    var withdrawn = 0;
+    if(doInvest && cashBalance < 0){
+      var need = -cashBalance;
+      for(var bi=buckets.length-1; bi>=0 && need>0; bi--){
+        var take = Math.min(need, buckets[bi].amt);
+        buckets[bi].amt -= take;
+        need -= take;
+        withdrawn += take;
+      }
+      cashBalance += withdrawn;
+    }
+
+    // 運用資産合計
+    var totalInvest = 0;
+    if(doInvest) buckets.forEach(function(b){totalInvest+=b.amt;});
+    var totalBal = Math.round(cashBalance) + Math.round(totalInvest);
+
+    // 収入内訳
+    var incDetail=[];
+    if(cbMode==='annuity'){if(y>=kaz60&&y<kaz60+5)incDetail.push({lbl:'企業年金CB',amt:p2});}
+    else{if(y===kaz60)incDetail.push({lbl:'CB一時金（税引前）',amt:Math.round(cbLump)});}
+    if(dcMode==='lump'){if(y===kaz60)incDetail.push({lbl:'DC一時金（税引前）',amt:Math.round(dcLump)});}
+    else{if(y>=kaz60&&y<kaz60+5)incDetail.push({lbl:'DC年金',amt:Math.round(dcBalance/5)});}
+    if(y>=kaz60&&y<kaz60+10)incDetail.push({lbl:'個人年金A（住友）',amt:p3});
+    if(y>=kaz65&&y<kaz65+10)incDetail.push({lbl:'個人年金B（住友）',amt:p4});
+    if(y>=kazActualStart)incDetail.push({lbl:'厚生年金・和幸（'+(kazPensionStartAge>65?kazPensionStartAge+'歳繰下':'65歳')+'）',amt:p1actual});
+    if(y>=yokoActualStart)incDetail.push({lbl:'厚生年金・陽子（'+(yokoPensionStartAge>65?yokoPensionStartAge+'歳繰下':'65歳')+'）',amt:p5actual});
+    if(y>=yoko65&&y<yoko65+10)incDetail.push({lbl:'個人年金・大樹（陽子）',amt:p6});
+    if(y>=2032)incDetail.push({lbl:'横浜マンション賃料',amt:Math.round(rentGross)});
+    if(doInvest&&investGain>0)incDetail.push({lbl:'運用益（税引前）',amt:investGain});
+
+    var netMonth=(income-retTax-compTax)/12;
+    if(netMonth>peakNetMonthly)peakNetMonthly=netMonth;
+
+    rows.push({
+      y,age,wa:wifeAge,
+      income:Math.round(income),expense:Math.round(expense),
+      net:Math.round(netCF),
+      cashBal:Math.round(cashBalance),
+      investBal:Math.round(totalInvest),
+      totalBal,
+      note:[],
+      peak:peakNetMonthly,
+      incDetail,expDetail,
+      investGain,investTaxAmt,withdrawn:Math.round(withdrawn),
+      fundAtRetire
+    });
+  }
+  return rows;
+}
+
+// ============================================================
+// プリセット
+// ============================================================
+var PRESETS = {
+  none:        {defense:0,   bA:{amt:0,    rate:0},   bB:{amt:0,    rate:0},   bC:{amt:0,    rate:0}},
+  conservative:{defense:1000,bA:{amt:2000, rate:0.8}, bB:{amt:1000, rate:2.0}, bC:{amt:500,  rate:3.5}},
+  standard:    {defense:1000,bA:{amt:1000, rate:0.8}, bB:{amt:1500, rate:3.0}, bC:{amt:1000, rate:5.0}},
+  aggressive:  {defense:1000,bA:{amt:500,  rate:0.8}, bB:{amt:1000, rate:3.5}, bC:{amt:2000, rate:6.5}},
+};
+function applyPreset(name){
+  var p=PRESETS[name];
+  document.getElementById('defenseAmt').value=p.defense;
+  document.getElementById('bucketA_amt').value=p.bA.amt;
+  document.getElementById('bucketA_rate').value=p.bA.rate;
+  document.getElementById('bucketB_amt').value=p.bB.amt;
+  document.getElementById('bucketB_rate').value=p.bB.rate;
+  document.getElementById('bucketC_amt').value=p.bC.amt;
+  document.getElementById('bucketC_rate').value=p.bC.rate;
+  document.querySelectorAll('.stab').forEach(function(el){el.classList.remove('active');});
+  event.target.classList.add('active');
+  calc();
+}
+
+function getInvestConfig(){
+  var aAmt=val('bucketA_amt'),aRate=val('bucketA_rate');
+  var bAmt=val('bucketB_amt'),bRate=val('bucketB_rate');
+  var cAmt=val('bucketC_amt'),cRate=val('bucketC_rate');
+  var total=aAmt+bAmt+cAmt;
+  return {
+    enabled: total>0,
+    defense: val('defenseAmt'),
+    total,
+    buckets:[
+      {name:'安全資産',amt:aAmt,rate:aRate,color:'#2563eb'},
+      {name:'中間資産',amt:bAmt,rate:bRate,color:'#7c3aed'},
+      {name:'成長資産',amt:cAmt,rate:cRate,color:'#b45309'},
+    ]
   };
 }
 
 // ============================================================
 // メイン計算
 // ============================================================
+function calc(){
+  var retireYear=parseInt(document.getElementById('retireYear').value);
+  var kazDelay=sel('kazDelay'), yokoDelay=sel('yokoDelay');
 
-function toggleDetail(rowId) {
-  var tr = document.getElementById(rowId);
-  if (!tr) return;
-  var parentTr = tr.previousElementSibling;
-  if (tr.style.display === 'none') {
-    tr.style.display = '';
-    if (parentTr) { var td = parentTr.querySelector('td:first-child'); if(td) td.textContent = '▼'; }
-  } else {
-    tr.style.display = 'none';
-    if (parentTr) { var td = parentTr.querySelector('td:first-child'); if(td) td.textContent = '▶'; }
-  }
-}
+  var inv=getInvestConfig();
+  // 運用なし（65歳・繰下げ比較用）
+  lastRows65    = calcRows(65, 65, null);
+  lastRowsDelay = calcRows(kazDelay, yokoDelay, null);
+  // 運用あり（現在の繰下げ設定）
+  var rowsInvest = calcRows(kazDelay, yokoDelay, deepCopyInvest(inv));
 
-var currentTab = 'current';
-var lastRows65 = [];
-var lastRowsDelay = [];
+  var rows = rowsInvest; // メイン表示は運用込み
 
-function val(id) { return parseFloat(document.getElementById(id).value) || 0; }
-function chk(id) { return document.getElementById(id).checked; }
-function sel(id) { return parseInt(document.getElementById(id).value); }
+  // 繰下げ表示
+  var kRate=Math.round((delayRate(kazDelay)-1)*1000)/10;
+  var yRate=Math.round((delayRate(yokoDelay)-1)*1000)/10;
+  var p1a=Math.round(val('p1base')*delayRate(kazDelay));
+  var p5a=Math.round(val('p5base')*delayRate(yokoDelay));
+  document.getElementById('delayResult').innerHTML=
+    '和幸：'+val('p1base')+'万 → <b>'+p1a+'万</b>/年（+'+kRate+'%）<br>'+
+    '陽子：'+val('p5base')+'万 → <b>'+p5a+'万</b>/年（+'+yRate+'%）';
 
-function delayRate(startAge) {
-  var months = (startAge - 65) * 12;
-  return 1 + months * 0.007;
-}
+  // 保険ファンド計算表示
+  var fundMonths=Math.max(0,(retireYear-2026)*12+9);
+  var fundAtRetire=Math.round(val('fundNow')+fundMonths*3);
+  var totalCash=val('cash')+val('severance')+fundAtRetire;
+  document.getElementById('s1').textContent=totalCash.toLocaleString()+'万円';
+  document.getElementById('ageLabel').textContent='退職時 '+(retireYear-1971)+'歳';
 
-function calcRows(kazPensionStartAge, yokoPensionStartAge) {
-  var retireYear  = parseInt(document.getElementById('retireYear').value);
-  var cash        = val('cash');
-  var severance   = val('severance');
-  var cbMode      = document.getElementById('cbMode').value;
-  var dcBalance   = val('dcBalance');
-  var dcMode      = document.getElementById('dcMode').value;
+  var firstRow=rows.find(function(r){return r.income>0;});
+  var gap=firstRow?firstRow.y-retireYear:'?';
+  document.getElementById('s2').textContent=gap===0?'なし':gap+'年間';
 
-  var p1base = val('p1base');
-  var p2     = val('p2');
-  var p3     = val('p3');
-  var p4     = val('p4');
-  var p5base = val('p5base');
-  var p6     = val('p6');
+  var peakM=rows.reduce(function(m,r){return Math.max(m,r.peak||0);},0);
+  document.getElementById('s3').textContent=Math.round(peakM)+'万円/月';
 
-  // 個人年金 払込総額 / 受取総額（必要経費計算用）
-  var p3paid  = val('p3paid');  var p3total = val('p3total');
-  var p4paid  = val('p4paid');  var p4total = val('p4total');
-  var p6paid  = val('p6paid');  var p6total = val('p6total');
+  var r85=rows.find(function(r){return r.age===85;});
+  var el4=document.getElementById('s4');
+  if(r85){el4.textContent=r85.totalBal.toLocaleString()+'万円';el4.className='val '+(r85.totalBal>=0?'teal':'red');}
 
-  var rent        = val('rent');
-  var rentExpRate = val('rentExpRate') / 100; // 経費率
-
-  var living    = val('living');
-  var fixedCost = val('fixedCost');
-  var insHealth = val('insHealth');
-  var insDaiju  = val('insDaiju');
-
-  var KAZ_BIRTH = 1971;
-  var YOKO_BIRTH = 1966;
-  var kaz60 = 2031;
-  var kaz65 = 2036;
-  var yoko65 = 2031;
-
-  var kazActualStartYear = KAZ_BIRTH + kazPensionStartAge;
-  var yokoActualStartYear = YOKO_BIRTH + yokoPensionStartAge;
-  var p1actual = Math.round(p1base * delayRate(kazPensionStartAge));
-  var p5actual = Math.round(p5base * delayRate(yokoPensionStartAge));
-
-  // 退職所得税（60歳時・一時金受取の場合）は収入に含めず別計上
-  var workYears = 35;
-  var lumpCB = cbMode === 'lump' ? p2 * 5 : 0;
-  var lumpDC = dcMode === 'lump' ? dcBalance : 0;
-  var retirementTaxCB = calcRetirementTax(lumpCB, workYears);
-  var retirementTaxDC = calcRetirementTax(lumpDC, workYears);
-  // 合算して一度に計算（控除は一回のみ）
-  var lumpTotal = lumpCB + lumpDC;
-  var retirementTaxTotal = calcRetirementTax(lumpTotal, workYears);
-
-  var balance = cash + severance;
-  var rows = [];
-  var firstIncomeYear = null;
-  var peakMonthlyNetIncome = 0;
-
-  for (var y = retireYear; y <= KAZ_BIRTH + 90; y++) {
-    var age    = y - KAZ_BIRTH;
-    var wifeAge = y - YOKO_BIRTH;
-    if (age > 90) break;
-
-    var income     = 0;
-    var incomeNote = [];
-
-    // 公的年金等に含まれる収入（公的年金等控除の対象）
-    var publicPensionIncome = 0;
-    // 個人年金収入（必要経費控除前）
-    var p3income = 0, p4income = 0, p6income = 0;
-    // 不動産収入（経費控除前）
-    var rentGross = 0;
-
-    // ── 企業年金CB ──
-    if (cbMode === 'annuity') {
-      if (y >= kaz60 && y < kaz60 + 5) {
-        income += p2;
-        publicPensionIncome += p2; // CB年金は公的年金等控除対象
-        incomeNote.push('CB年金');
-      }
-    } else {
-      if (y === kaz60) {
-        income += lumpCB;
-        incomeNote.push('CB一時金');
-      }
-    }
-
-    // ── 企業型DC ──
-    if (dcMode === 'lump') {
-      if (y === kaz60) {
-        income += lumpDC;
-        incomeNote.push('DC一時金');
-      }
-    } else {
-      var dcAnnual = Math.round(dcBalance / 5);
-      if (y >= kaz60 && y < kaz60 + 5) {
-        income += dcAnnual;
-        publicPensionIncome += dcAnnual; // DC年金も公的年金等控除対象
-        incomeNote.push('DC年金');
-      }
-    }
-
-    // ── 個人年金A（住友・60〜10年）──
-    if (y >= kaz60 && y < kaz60 + 10) {
-      income += p3;
-      p3income = p3;
-      incomeNote.push('個人A');
-    }
-
-    // ── 個人年金B（住友・65〜10年）──
-    if (y >= kaz65 && y < kaz65 + 10) {
-      income += p4;
-      p4income = p4;
-      incomeNote.push('個人B');
-    }
-
-    // ── 厚生年金・和幸 ──
-    if (y >= kazActualStartYear) {
-      income += p1actual;
-      publicPensionIncome += p1actual;
-      incomeNote.push('厚生' + p1actual + '万');
-    }
-
-    // ── 陽子年金 ──
-    if (y >= yokoActualStartYear) {
-      income += p5actual;
-      publicPensionIncome += p5actual;
-      incomeNote.push('陽子' + p5actual + '万');
-    }
-
-    // ── 大樹・陽子個人年金（65〜10年）──
-    if (y >= yoko65 && y < yoko65 + 10) {
-      income += p6;
-      p6income = p6;
-      incomeNote.push('大樹');
-    }
-
-    // ── 横浜賃料（2032〜）──
-    if (y >= 2032) {
-      rentGross = rent * 12;
-      income += rentGross;
-      incomeNote.push('横浜');
-    }
-
-    if (income > 0 && firstIncomeYear === null) firstIncomeYear = y;
-
-    // ── 支出計算 ──
-    var expense = 0;
-    var expDetail = [];
-
-    expense += (living + fixedCost) * 12;
-    expDetail.push({lbl:'生活費（クレカ＋現金）', amt: Math.round(living * 12)});
-    expDetail.push({lbl:'管理費・光熱費・税金', amt: Math.round(fixedCost * 12)});
-
-    expense += insHealth * 12;
-    expDetail.push({lbl:'住友生命・健康保険', amt: Math.round(insHealth * 12)});
-
-    expense += insDaiju * 12;
-    expDetail.push({lbl:'大樹生命・和幸', amt: Math.round(insDaiju * 12)});
-
-    if (y <= 2030) {
-      expense += 4.5 * 12;
-      expDetail.push({lbl:'住友年金A/B払込', amt: Math.round(4.5 * 12)});
-    }
-    if (y < 2029) {
-      expense += 13.64 * 12;
-      expDetail.push({lbl:'オリコローン', amt: Math.round(13.64 * 12)});
-    } else if (y === 2029) {
-      expense += 13.64 * 11;
-      expDetail.push({lbl:'オリコローン（11ヶ月）', amt: Math.round(13.64 * 11)});
-    }
-
-    // 国民健康保険
-    if (chk('chkNHI') && y >= retireYear) {
-      var nhiBase = (y === retireYear) ? 700 : (y === retireYear + 1) ? 500 : Math.max(income, 33);
-      var nhi = Math.round(Math.min(Math.max(0, nhiBase - 43) * 0.09 + 7, 83) * 10) / 10;
-      expense += nhi;
-      expDetail.push({lbl:'国民健康保険', amt: Math.round(nhi)});
-    }
-
-    // 国民年金（〜60歳）
-    if (chk('chkNP') && y >= retireYear && age < 60) {
-      expense += 1.7 * 12;
-      expDetail.push({lbl:'国民年金', amt: Math.round(1.7 * 12)});
-    }
-
-    // 介護保険
-    if (chk('chkCare') && y >= retireYear && age >= 40) {
-      var careAmt = age < 65 ? 8 : 6;
-      expense += careAmt;
-      expDetail.push({lbl:'介護保険', amt: careAmt});
-    }
-
-    // ── 税金計算 ──
-
-    // (1) 退職所得税（60歳・一時金受取年のみ）
-    var retTax = 0;
-    if (y === kaz60 && lumpTotal > 0) {
-      retTax = retirementTaxTotal.tax;
-      expDetail.push({
-        lbl: '退職所得税・住民税（CB' + (lumpCB>0?Math.round(lumpCB)+'万':'なし') + '＋DC' + (lumpDC>0?Math.round(lumpDC)+'万':'なし') + '、控除後課税所得' + retirementTaxTotal.taxable + '万）',
-        amt: retTax
-      });
-      expense += retTax;
-    }
-
-    // (2) 総合課税（年金雑所得 + 不動産所得）
-    // 個人年金の雑所得（必要経費控除後）
-    var p3misc = privateAnnuityMiscIncome(p3income, p3paid, p3total);
-    var p4misc = privateAnnuityMiscIncome(p4income, p4paid, p4total);
-    var p6misc = privateAnnuityMiscIncome(p6income, p6paid, p6total);
-    var totalPrivateMisc = p3misc + p4misc + p6misc;
-
-    // 不動産所得（経費控除後）
-    var realEstateIncome = Math.max(0, rentGross * (1 - rentExpRate));
-
-    var taxResult = calcComprehensiveTax(publicPensionIncome, totalPrivateMisc, realEstateIncome, age);
-    if (taxResult.tax > 0) {
-      var d = taxResult.detail;
-      var taxLblParts = [];
-      if (d.publicPension > 0) taxLblParts.push('公的年金等' + d.publicPension + '万（控除▲' + d.pensionDeduction + '万→雑所得' + d.pensionMiscIncome + '万）');
-      if (d.privateMiscIncome > 0) taxLblParts.push('個人年金雑所得' + d.privateMiscIncome + '万');
-      if (d.realEstateIncome > 0) taxLblParts.push('不動産所得' + d.realEstateIncome + '万');
-      expDetail.push({
-        lbl: '所得税・住民税（課税所得' + d.taxableIncome + '万：' + taxLblParts.join('・') + '）',
-        amt: taxResult.tax
-      });
-      expense += taxResult.tax;
-    }
-
-    // 収入内訳
-    var incDetail = [];
-    if (cbMode === 'annuity') {
-      if (y >= kaz60 && y < kaz60 + 5) incDetail.push({lbl:'企業年金CB', amt: p2});
-    } else {
-      if (y === kaz60) incDetail.push({lbl:'CB一時金（税引前）', amt: Math.round(lumpCB)});
-    }
-    if (dcMode === 'lump') {
-      if (y === kaz60) incDetail.push({lbl:'DC一時金（税引前）', amt: Math.round(lumpDC)});
-    } else {
-      if (y >= kaz60 && y < kaz60 + 5) incDetail.push({lbl:'企業型DC年金', amt: Math.round(dcBalance / 5)});
-    }
-    if (y >= kaz60 && y < kaz60 + 10) incDetail.push({lbl:'個人年金A（住友）', amt: p3});
-    if (y >= kaz65 && y < kaz65 + 10) incDetail.push({lbl:'個人年金B（住友）', amt: p4});
-    if (y >= kazActualStartYear) incDetail.push({lbl:'厚生年金・和幸（' + (kazPensionStartAge > 65 ? kazPensionStartAge + '歳繰下' : '65歳基準') + '）', amt: p1actual});
-    if (y >= yokoActualStartYear) incDetail.push({lbl:'厚生年金・陽子（' + (yokoPensionStartAge > 65 ? yokoPensionStartAge + '歳繰下' : '65歳基準') + '）', amt: p5actual});
-    if (y >= yoko65 && y < yoko65 + 10) incDetail.push({lbl:'個人年金・大樹（陽子）', amt: p6});
-    if (y >= 2032) incDetail.push({lbl:'横浜マンション賃料', amt: Math.round(rentGross)});
-
-    var netCF = income - expense;
-    balance += netCF;
-
-    // ピーク月収は税引後で計算（収入 - 税金支出）
-    var taxOnly = (retTax + (taxResult ? taxResult.tax : 0));
-    var netMonthly = (income - taxOnly) / 12;
-    if (netMonthly > peakMonthlyNetIncome) peakMonthlyNetIncome = netMonthly;
-
-    rows.push({
-      y: y, age: age, wa: wifeAge,
-      income: Math.round(income),
-      expense: Math.round(expense),
-      net: Math.round(netCF),
-      bal: Math.round(balance),
-      note: incomeNote.join('・'),
-      firstIncomeYear: firstIncomeYear,
-      peak: peakMonthlyNetIncome,
-      incDetail: incDetail,
-      expDetail: expDetail,
-      taxDetail: taxResult ? taxResult.detail : {}
-    });
+  // 繰下げ比較（運用なし）
+  var r85b=lastRows65.find(function(r){return r.age===85;});
+  var r85c=lastRowsDelay.find(function(r){return r.age===85;});
+  if(r85b){document.getElementById('cmp65-85').textContent=r85b.cashBal.toLocaleString()+'万円';}
+  if(r85c){document.getElementById('cmpDelay-85').textContent=r85c.cashBal.toLocaleString()+'万円';}
+  document.getElementById('cmpDelayLabel').textContent='▼ 和幸'+kazDelay+'歳/陽子'+yokoDelay+'歳';
+  if(r85b&&r85c){
+    var diff=r85c.cashBal-r85b.cashBal;
+    var msg=diff>=0?'繰下げ受給により85歳時点で <b>+'+(diff).toLocaleString()+'万円</b> 有利です。':'繰下げ受給により85歳時点で <b>'+(diff).toLocaleString()+'万円</b> 不利です。';
+    var dEl=document.getElementById('cmpDiff');
+    dEl.innerHTML=msg;dEl.style.background=diff>=0?'#f0fdf4':'#fff1f2';
+    dEl.style.borderColor=diff>=0?'#bbf7d0':'#fecaca';dEl.style.color=diff>=0?'#15803d':'#b91c1c';
   }
 
-  return rows;
-}
+  // 運用4シナリオ比較
+  var s0=calcRows(kazDelay,yokoDelay,null);
+  var s1=calcRows(kazDelay,yokoDelay,deepCopyInvest(PRESETS_TO_CONFIG('conservative')));
+  var s2=calcRows(kazDelay,yokoDelay,deepCopyInvest(PRESETS_TO_CONFIG('standard')));
+  var s3=calcRows(kazDelay,yokoDelay,deepCopyInvest(PRESETS_TO_CONFIG('aggressive')));
+  var get85=function(arr){var r=arr.find(function(r){return r.age===85;});return r?r.totalBal:0;};
+  document.getElementById('sc0').textContent=(get85(s0)||0).toLocaleString()+'万円';
+  document.getElementById('sc1').textContent=(get85(s1)||0).toLocaleString()+'万円';
+  document.getElementById('sc2').textContent=(get85(s2)||0).toLocaleString()+'万円';
+  document.getElementById('sc3').textContent=(get85(s3)||0).toLocaleString()+'万円';
 
-function calc() {
-  var retireYear = parseInt(document.getElementById('retireYear').value);
-  var kazDelay = sel('kazDelay');
-  var yokoDelay = sel('yokoDelay');
-
-  lastRows65    = calcRows(65, 65);
-  lastRowsDelay = calcRows(kazDelay, yokoDelay);
-
-  var rows = lastRowsDelay;
-
-  // 繰下げ増額表示
-  var kRate = Math.round((delayRate(kazDelay) - 1) * 1000) / 10;
-  var yRate = Math.round((delayRate(yokoDelay) - 1) * 1000) / 10;
-  var p1actual = Math.round(val('p1base') * delayRate(kazDelay));
-  var p5actual = Math.round(val('p5base') * delayRate(yokoDelay));
-  document.getElementById('delayResult').innerHTML =
-    '和幸：' + val('p1base') + '万 → <b>' + p1actual + '万</b>/年（+' + kRate + '%）<br>' +
-    '陽子：' + val('p5base') + '万 → <b>' + p5actual + '万</b>/年（+' + yRate + '%）';
-
-  // サマリー
-  var totalCash = val('cash') + val('severance');
-  document.getElementById('s1').textContent = totalCash.toLocaleString() + '万円';
-  document.getElementById('ageLabel').textContent = '退職時 ' + (retireYear - 1971) + '歳';
-
-  var firstIncomeRow = rows.find(function(r){ return r.income > 0; });
-  var gap = firstIncomeRow ? firstIncomeRow.y - retireYear : '?';
-  document.getElementById('s2').textContent = (gap === 0 ? 'なし' : gap + '年間');
-
-  var peakM = rows.reduce(function(m, r){ return Math.max(m, r.peak || 0); }, 0);
-  document.getElementById('s3').textContent = Math.round(peakM) + '万円/月';
-
-  var r85d = rows.find(function(r){ return r.age === 85; });
-  var el4 = document.getElementById('s4');
-  if (r85d) {
-    el4.textContent = r85d.bal.toLocaleString() + '万円';
-    el4.className = 'val ' + (r85d.bal >= 0 ? 'green' : 'red');
-  }
-
-  // 比較バナー
-  var r85b = lastRows65.find(function(r){ return r.age === 85; });
-  var r85c = lastRowsDelay.find(function(r){ return r.age === 85; });
-  if (r85b) document.getElementById('cmp65-85').textContent = r85b.bal.toLocaleString() + '万円';
-  if (r85c) document.getElementById('cmpDelay-85').textContent = r85c.bal.toLocaleString() + '万円';
-
-  var delayLabel = '和幸' + kazDelay + '歳 / 陽子' + yokoDelay + '歳 受給';
-  document.getElementById('cmpDelayLabel').textContent = '▼ ' + delayLabel;
-
-  if (r85b && r85c) {
-    var diff = r85c.bal - r85b.bal;
-    var sign = diff >= 0 ? '+' : '';
-    var msg = diff >= 0
-      ? '繰下げ受給により85歳時点で <b>' + sign + diff.toLocaleString() + '万円</b> 有利です。'
-      : '繰下げ受給により85歳時点で <b>' + diff.toLocaleString() + '万円</b> 不利です（繰下げ中の取崩しコストが大きい）。';
-    document.getElementById('cmpDiff').innerHTML = msg;
-    document.getElementById('cmpDiff').style.background   = diff >= 0 ? '#f0fdf4' : '#fff1f2';
-    document.getElementById('cmpDiff').style.borderColor  = diff >= 0 ? '#bbf7d0' : '#fecaca';
-    document.getElementById('cmpDiff').style.color        = diff >= 0 ? '#15803d' : '#b91c1c';
-  }
-
-  // 損益分岐点
-  var breakEvenAge = null;
-  for (var i = 0; i < Math.min(lastRows65.length, lastRowsDelay.length); i++) {
-    if (lastRows65[i].bal < lastRowsDelay[i].bal) {
-      breakEvenAge = lastRows65[i].age;
-      break;
-    }
-  }
+  // 運用サマリー
+  var invTotal=val('bucketA_amt')+val('bucketB_amt')+val('bucketC_amt');
+  var wAvg=invTotal>0?(val('bucketA_amt')*val('bucketA_rate')+val('bucketB_amt')*val('bucketB_rate')+val('bucketC_amt')*val('bucketC_rate'))/invTotal:0;
+  document.getElementById('investSummary').innerHTML=
+    '運用資産合計：<b>'+(invTotal).toLocaleString()+'万円</b>　防衛資金：<b>'+val('defenseAmt').toLocaleString()+'万円</b><br>'+
+    '加重平均利回り：<b>'+wAvg.toFixed(2)+'%</b>　NISA非課税枠年360万活用';
 
   // ノート
-  var notes = [];
-  if (gap > 0) notes.push('⚠️ 退職〜最初の年金まで' + gap + '年間、年金収入ゼロ。手持ち' + totalCash.toLocaleString() + '万円から年間約' + Math.round(rows[0] ? rows[0].expense : 0).toLocaleString() + '万円取崩し。');
+  var fundMonths2=Math.max(0,(retireYear-2026)*12+9);
+  var notes=[];
+  if(gap>0)notes.push('⚠️ 退職〜最初の年金まで'+gap+'年間。年間支出約'+Math.round(rows[0]?rows[0].expense:0)+'万円の取崩し。');
+  notes.push('📌 保険ファンド解約：440万＋'+fundMonths2+'ヶ月×3万＝<b>'+fundAtRetire+'万円</b>を退職時に現金化');
+  notes.push('📌 大樹生命（陽子）：2026年より月'+val('insDaijuPost')+'万円に変更');
   notes.push('📌 2029年11月：オリコローン完済（月13.6万円消滅）');
-  notes.push('📌 2032年〜：横浜マンション賃料開始（月' + val('rent') + '万円・経費率' + val('rentExpRate') + '%）');
-  if (kazDelay > 65) notes.push('📌 和幸さん' + kazDelay + '歳受給開始：65〜' + kazDelay + '歳の間は厚生年金収入なし。繰下げ中は手持ちキャッシュで賄う必要あり。');
-  if (breakEvenAge) notes.push('✅ 損益分岐点：約' + breakEvenAge + '歳以降、繰下げ受給の方が累積で有利になります。');
-  notes.push('💡 税金は①退職所得（一時金）②年金雑所得（公的年金等控除適用）③個人年金雑所得（必要経費控除）④不動産所得（経費率控除）を個別計算・合算課税しています。');
-  document.getElementById('noteBox').innerHTML = notes.map(function(n){ return '<p>' + n + '</p>'; }).join('');
+  notes.push('📌 2032年〜：横浜マンション賃料開始（月'+val('rent')+'万円）');
+  if(invTotal>0)notes.push('💰 運用：'+['安全','中間','成長'].map(function(n,i){return n+[val('bucketA_rate'),val('bucketB_rate'),val('bucketC_rate')][i]+'%';}).join(' / ')+'　85歳残高：運用なし'+get85(s0).toLocaleString()+'万→標準型'+get85(s2).toLocaleString()+'万（+'+(get85(s2)-get85(s0)).toLocaleString()+'万）');
+  document.getElementById('noteBox').innerHTML=notes.map(function(n){return '<p>'+n+'</p>';}).join('');
 
   updateTaxSim();
-  renderTable(rows, lastRows65, retireYear, kazDelay, yokoDelay);
+  renderTable(rows, lastRowsDelay, retireYear, kazDelay, yokoDelay);
 
-  if (currentTab === 'current') renderChartSingle(rows);
-  else renderChartCompare(lastRows65, lastRowsDelay, kazDelay, yokoDelay);
+  if(currentTab==='current')renderChartSingle(rows);
+  else if(currentTab==='compare')renderChartCompare(lastRows65,lastRowsDelay,kazDelay,yokoDelay);
+  else renderChartInvest(s0,s1,s2,s3);
 }
 
-function updateTaxSim() {
-  var cbMode    = document.getElementById('cbMode').value;
-  var dcMode    = document.getElementById('dcMode').value;
-  var dcBalance = val('dcBalance');
-  var p2        = val('p2');
-  var cbLump    = cbMode === 'lump' ? p2 * 5 : 0;
-  var dcLump    = dcMode === 'lump' ? dcBalance : 0;
-  var totalLump = cbLump + dcLump;
-
-  var box = document.getElementById('taxSimBox');
-  if (cbMode === 'annuity' && dcMode === 'annuity') {
-    box.innerHTML = '両方年金受取：60歳時の一時金税負担なし';
-    return;
-  }
-
-  var result = calcRetirementTax(totalLump, 35);
-  box.innerHTML =
-    '60歳時 一時金受取試算：<br>' +
-    (cbLump > 0 ? 'CB一時金：' + Math.round(cbLump).toLocaleString() + '万円<br>' : '') +
-    (dcLump > 0 ? 'DC一時金：' + dcLump.toLocaleString() + '万円<br>' : '') +
-    '合計：<b>' + totalLump.toLocaleString() + '万円</b><br>' +
-    '退職所得控除（勤続35年）：▲' + result.deduction.toLocaleString() + '万円<br>' +
-    '課税退職所得：' + result.taxable.toLocaleString() + '万円<br>' +
-    '概算税額（所得税＋住民税）：<b style="color:#b91c1c">' + result.tax.toLocaleString() + '万円</b>';
+function PRESETS_TO_CONFIG(name){
+  var p=PRESETS[name];
+  return {
+    enabled:true,defense:p.defense,
+    total:p.bA.amt+p.bB.amt+p.bC.amt,
+    buckets:[
+      {name:'安全',amt:p.bA.amt,rate:p.bA.rate,color:'#2563eb'},
+      {name:'中間',amt:p.bB.amt,rate:p.bB.rate,color:'#7c3aed'},
+      {name:'成長',amt:p.bC.amt,rate:p.bC.rate,color:'#b45309'},
+    ]
+  };
+}
+function deepCopyInvest(cfg){
+  if(!cfg||!cfg.enabled)return null;
+  return {
+    enabled:cfg.enabled,defense:cfg.defense,total:cfg.total,
+    buckets:cfg.buckets.map(function(b){return{name:b.name,amt:b.amt,rate:b.rate,color:b.color};})
+  };
 }
 
-function renderTable(rows, rows65, retireYear, kazDelay, yokoDelay) {
-  var tbody = document.getElementById('tbody');
-  tbody.innerHTML = '';
+function updateTaxSim(){
+  var cbMode=document.getElementById('cbMode').value;
+  var dcMode=document.getElementById('dcMode').value;
+  var dcBalance=val('dcBalance'),p2=val('p2');
+  var cbLump=cbMode==='lump'?p2*5:0;
+  var dcLump=dcMode==='lump'?dcBalance:0;
+  var totalLump=cbLump+dcLump;
+  var box=document.getElementById('taxSimBox');
+  if(cbMode==='annuity'&&dcMode==='annuity'){box.innerHTML='両方年金受取：60歳時の一時金税負担なし';return;}
+  var result=retirementTax(totalLump,35);
+  box.innerHTML='60歳時 一時金受取試算：<br>'+(cbLump>0?'CB一時金：'+Math.round(cbLump).toLocaleString()+'万円<br>':'')+
+    (dcLump>0?'DC一時金：'+dcLump.toLocaleString()+'万円<br>':'')+
+    '合計：<b>'+totalLump.toLocaleString()+'万円</b><br>'+
+    '退職所得控除（勤続35年）：▲'+result.deduction.toLocaleString()+'万円<br>'+
+    '課税退職所得：'+result.taxable.toLocaleString()+'万円<br>'+
+    '概算税額：<b style="color:#b91c1c">'+result.tax.toLocaleString()+'万円</b>';
+}
 
-  var kaz60 = 2031; var kaz65 = 2036;
-  var kazActualStart  = 1971 + kazDelay;
-  var yokoActualStart = 1966 + yokoDelay;
+function toggleDetail(rowId){
+  var tr=document.getElementById(rowId);if(!tr)return;
+  var p=tr.previousElementSibling;
+  if(tr.style.display==='none'){tr.style.display='';if(p){var td=p.querySelector('td:first-child');if(td)td.textContent='▼';}}
+  else{tr.style.display='none';if(p){var td=p.querySelector('td:first-child');if(td)td.textContent='▶';}}
+}
 
-  var phases = [
-    { label: 'フェーズ1：年金収入なし期間',            s: retireYear, e: kaz60 - 1 },
-    { label: 'フェーズ2：CB・個人年金開始（60歳〜）',  s: kaz60, e: Math.max(kazActualStart, yokoActualStart) - 1 },
-    { label: 'フェーズ3：公的年金開始〜',              s: Math.min(kazActualStart, yokoActualStart), e: kaz65 + 9 },
-    { label: 'フェーズ4：個人年金終了後（75歳〜）',    s: kaz65 + 10, e: 9999 },
+function renderTable(rows, rowsBase, retireYear, kazDelay, yokoDelay){
+  var tbody=document.getElementById('tbody');tbody.innerHTML='';
+  var kaz60=2031,kaz65=2036;
+  var kazActualStart=1971+kazDelay,yokoActualStart=1966+yokoDelay;
+  var phases=[
+    {label:'フェーズ1：年金収入なし期間',s:retireYear,e:kaz60-1},
+    {label:'フェーズ2：CB・個人年金開始（60歳〜）',s:kaz60,e:Math.max(kazActualStart,yokoActualStart)-1},
+    {label:'フェーズ3：公的年金開始〜',s:Math.min(kazActualStart,yokoActualStart),e:kaz65+9},
+    {label:'フェーズ4：個人年金終了後（75歳〜）',s:kaz65+10,e:9999},
   ];
-
-  var curPhase = -1;
-  rows.forEach(function(r, i) {
-    var pi = phases.findIndex(function(p){ return r.y >= p.s && r.y <= p.e; });
-    if (pi !== curPhase && pi >= 0) {
-      curPhase = pi;
-      var ph = document.createElement('tr');
-      ph.className = 'ph-row';
-      ph.innerHTML = '<td colspan="9">── ' + phases[pi].label + '</td>';
-      tbody.appendChild(ph);
-    }
-
-    var tags = '';
-    if (r.y === retireYear)        tags += '<span class="tag tag-b">退職</span>';
-    if (r.y === 2029)              tags += '<span class="tag tag-r">ローン完済</span>';
-    if (r.y === 2031)              tags += '<span class="tag tag-g">CB・個人A開始</span>';
-    if (r.y === 2032)              tags += '<span class="tag tag-g">横浜賃料</span>';
-    if (r.y === kazActualStart)    tags += '<span class="tag tag-p">和幸年金開始</span>';
-    if (r.y === yokoActualStart && yokoActualStart !== kazActualStart) tags += '<span class="tag tag-p">陽子年金開始</span>';
-    if (r.y === kaz65 + 10)       tags += '<span class="tag tag-r">個人年金終了</span>';
-
-    var r65     = rows65[i] || null;
-    var bal65str = r65 ? r65.bal.toLocaleString() : '—';
-    var netCol  = r.net >= 0 ? 'green' : 'red';
-    var balCol  = r.bal >= 0 ? 'green' : 'red';
-    var diffBal = r65 ? r.bal - r65.bal : null;
-
-    var rowId = 'row-' + r.y;
-    var tr = document.createElement('tr');
-    tr.style.cursor = 'pointer';
-    tr.onclick = (function(rid){ return function(){ toggleDetail(rid); }; })(rowId);
-    tr.innerHTML =
-      '<td style="color:#99a;font-size:11px;width:20px">▶</td>' +
-      '<td>' + r.y + '年' + tags + '</td>' +
-      '<td style="text-align:center">' + r.age + '歳/陽子' + r.wa + '歳</td>' +
-      '<td class="green">' + r.income.toLocaleString() + '</td>' +
-      '<td class="red">' + r.expense.toLocaleString() + '</td>' +
-      '<td class="' + netCol + '">' + (r.net >= 0 ? '+' : '') + r.net.toLocaleString() + '</td>' +
-      '<td class="' + balCol + '"><b>' + r.bal.toLocaleString() + '</b></td>' +
-      '<td style="color:#7c3aed;font-size:11px">' + bal65str +
-        (diffBal !== null ? '<span style="font-size:10px;color:' + (diffBal >= 0 ? '#16a34a' : '#dc2626') + '">（' + (diffBal >= 0 ? '+' : '') + diffBal.toLocaleString() + '）</span>' : '') +
-      '</td>' +
-      '<td style="font-size:10px;color:#667;text-align:left">' + r.note + '</td>';
+  var curPhase=-1;
+  rows.forEach(function(r,i){
+    var pi=phases.findIndex(function(p){return r.y>=p.s&&r.y<=p.e;});
+    if(pi!==curPhase&&pi>=0){curPhase=pi;var ph=document.createElement('tr');ph.className='ph-row';ph.innerHTML='<td colspan="11">── '+phases[pi].label+'</td>';tbody.appendChild(ph);}
+    var tags='';
+    if(r.y===retireYear)tags+='<span class="tag tag-b">退職</span>';
+    if(r.y===2026)tags+='<span class="tag tag-g">大樹保険料変更</span>';
+    if(r.y===2029)tags+='<span class="tag tag-r">ローン完済</span>';
+    if(r.y===2031)tags+='<span class="tag tag-g">CB・個人A開始</span>';
+    if(r.y===2032)tags+='<span class="tag tag-g">横浜賃料</span>';
+    if(r.y===kazActualStart)tags+='<span class="tag tag-p">和幸年金開始</span>';
+    if(r.y===yokoActualStart&&yokoActualStart!==kazActualStart)tags+='<span class="tag tag-p">陽子年金開始</span>';
+    if(r.y===kaz65+10)tags+='<span class="tag tag-r">個人年金終了</span>';
+    var rBase=rowsBase[i]||null;
+    var base65str=rBase?rBase.cashBal.toLocaleString():'—';
+    var diffBal=rBase?r.totalBal-rBase.cashBal:null;
+    var netCol=r.net>=0?'green':'red';
+    var balCol=r.totalBal>=0?'teal':'red';
+    var rowId='row-'+r.y;
+    var tr=document.createElement('tr');tr.style.cursor='pointer';
+    tr.onclick=(function(rid){return function(){toggleDetail(rid);};})(rowId);
+    tr.innerHTML=
+      '<td style="color:#99a;font-size:11px;width:20px">▶</td>'+
+      '<td>'+r.y+'年'+tags+'</td>'+
+      '<td style="text-align:center">'+r.age+'歳/陽子'+r.wa+'歳</td>'+
+      '<td class="green">'+r.income.toLocaleString()+'</td>'+
+      '<td class="red">'+r.expense.toLocaleString()+'</td>'+
+      '<td class="'+netCol+'">'+(r.net>=0?'+':'')+r.net.toLocaleString()+'</td>'+
+      '<td class="'+(r.cashBal>=0?'':'red')+'">'+r.cashBal.toLocaleString()+'</td>'+
+      '<td class="teal">'+r.investBal.toLocaleString()+'</td>'+
+      '<td class="'+balCol+'"><b>'+r.totalBal.toLocaleString()+'</b></td>'+
+      '<td style="color:#7c3aed;font-size:11px">'+base65str+(diffBal!==null?'<span style="font-size:10px;color:'+(diffBal>=0?'#16a34a':'#dc2626')+'">（'+(diffBal>=0?'+':'')+diffBal.toLocaleString()+'）</span>':'')+'</td>'+
+      '<td style="font-size:10px;color:#667;text-align:left">'+r.note+'</td>';
     tbody.appendChild(tr);
 
-    // 詳細行
-    var detailTr = document.createElement('tr');
-    detailTr.id = rowId;
-    detailTr.style.display = 'none';
-    var incRows = (r.incDetail || []).map(function(d){
-      return '<tr><td style="padding:3px 10px 3px 30px;color:#15803d;font-size:11px">＋ ' + d.lbl + '</td>' +
-             '<td colspan="7" style="text-align:right;color:#15803d;font-size:11px;padding:3px 10px">' + d.amt.toLocaleString() + ' 万円</td></tr>';
-    }).join('');
-    var expRows = (r.expDetail || []).map(function(d){
-      return '<tr><td style="padding:3px 10px 3px 30px;color:#b91c1c;font-size:11px">－ ' + d.lbl + '</td>' +
-             '<td colspan="7" style="text-align:right;color:#b91c1c;font-size:11px;padding:3px 10px">' + d.amt.toLocaleString() + ' 万円</td></tr>';
-    }).join('');
-    var inner = '<td colspan="9" style="padding:0;background:#f8f9fc;border-bottom:2px solid #dde"><table style="width:100%">' +
-      '<tr><td colspan="8" style="padding:4px 10px 2px 20px;font-size:10px;font-weight:600;color:#667;letter-spacing:.05em">収入内訳</td></tr>' +
-      incRows +
-      '<tr><td colspan="8" style="padding:6px 10px 2px 20px;font-size:10px;font-weight:600;color:#667;letter-spacing:.05em">支出内訳（税金含む）</td></tr>' +
-      expRows +
+    var detailTr=document.createElement('tr');detailTr.id=rowId;detailTr.style.display='none';
+    var incRows=(r.incDetail||[]).map(function(d){return '<tr><td style="padding:3px 10px 3px 30px;color:#15803d;font-size:11px">＋ '+d.lbl+'</td><td colspan="9" style="text-align:right;color:#15803d;font-size:11px;padding:3px 10px">'+d.amt.toLocaleString()+' 万円</td></tr>';}).join('');
+    var expRows=(r.expDetail||[]).map(function(d){return '<tr><td style="padding:3px 10px 3px 30px;color:#b91c1c;font-size:11px">－ '+d.lbl+'</td><td colspan="9" style="text-align:right;color:#b91c1c;font-size:11px;padding:3px 10px">'+d.amt.toLocaleString()+' 万円</td></tr>';}).join('');
+    var investRow=r.investBal>0?'<tr><td style="padding:3px 10px 3px 30px;color:#0d9488;font-size:11px">📈 運用資産残高（税引後）</td><td colspan="9" style="text-align:right;color:#0d9488;font-size:11px;padding:3px 10px">'+r.investBal.toLocaleString()+' 万円</td></tr>':'';
+    detailTr.innerHTML='<td colspan="11" style="padding:0;background:#f8f9fc;border-bottom:2px solid #dde"><table style="width:100%">'+
+      '<tr><td colspan="10" style="padding:4px 10px 2px 20px;font-size:10px;font-weight:600;color:#667">収入内訳</td></tr>'+incRows+
+      '<tr><td colspan="10" style="padding:6px 10px 2px 20px;font-size:10px;font-weight:600;color:#667">支出内訳（税金含む）</td></tr>'+expRows+
+      (investRow?'<tr><td colspan="10" style="padding:6px 10px 2px 20px;font-size:10px;font-weight:600;color:#0d9488">運用状況</td></tr>'+investRow:'')+
       '</table></td>';
-    detailTr.innerHTML = inner;
     tbody.appendChild(detailTr);
   });
 }
 
-function renderChartSingle(rows) {
-  var ctx = document.getElementById('chart').getContext('2d');
-  if (myChart) { myChart.destroy(); myChart = null; }
-  document.getElementById('chartLegend').innerHTML =
-    '<span><span style="display:inline-block;width:10px;height:10px;background:#16a34a;border-radius:2px;margin-right:4px"></span>収入</span>' +
-    '<span><span style="display:inline-block;width:10px;height:10px;background:#dc2626;border-radius:2px;margin-right:4px"></span>支出（税込）</span>' +
-    '<span><span style="display:inline-block;width:10px;height:10px;background:#2563eb;border-radius:2px;margin-right:4px"></span>累積残高（右軸）</span>';
-  myChart = new Chart(document.getElementById('chart').getContext('2d'), {
-    data: {
-      labels: rows.map(function(r){ return r.y.toString(); }),
-      datasets: [
-        { type:'bar', label:'収入', data: rows.map(function(r){return r.income;}), backgroundColor:'rgba(22,163,74,0.6)', yAxisID:'y' },
-        { type:'bar', label:'支出（税込）', data: rows.map(function(r){return r.expense;}), backgroundColor:'rgba(220,38,38,0.5)', yAxisID:'y' },
-        { type:'line', label:'累積残高', data: rows.map(function(r){return r.bal;}), borderColor:'#2563eb', backgroundColor:'rgba(37,99,235,0.07)', borderWidth:2, pointRadius:1, fill:true, tension:0.3, yAxisID:'y2' }
-      ]
-    },
-    options: chartOptions()
-  });
+function renderChartSingle(rows){
+  var ctx=document.getElementById('chart').getContext('2d');
+  if(myChart){myChart.destroy();myChart=null;}
+  document.getElementById('chartLegend').innerHTML=
+    '<span><span style="display:inline-block;width:10px;height:10px;background:#16a34a;border-radius:2px;margin-right:4px"></span>収入</span>'+
+    '<span><span style="display:inline-block;width:10px;height:10px;background:#dc2626;border-radius:2px;margin-right:4px"></span>支出（税込）</span>'+
+    '<span><span style="display:inline-block;width:10px;height:10px;background:#2563eb;border-radius:2px;margin-right:4px"></span>現金残高（右軸）</span>'+
+    '<span><span style="display:inline-block;width:10px;height:10px;background:#0d9488;border-radius:2px;margin-right:4px"></span>合計残高（右軸）</span>';
+  myChart=new Chart(ctx,{data:{labels:rows.map(function(r){return r.y.toString();}),datasets:[
+    {type:'bar',label:'収入',data:rows.map(function(r){return r.income;}),backgroundColor:'rgba(22,163,74,0.6)',yAxisID:'y'},
+    {type:'bar',label:'支出',data:rows.map(function(r){return r.expense;}),backgroundColor:'rgba(220,38,38,0.5)',yAxisID:'y'},
+    {type:'line',label:'現金残高',data:rows.map(function(r){return r.cashBal;}),borderColor:'#2563eb',backgroundColor:'rgba(37,99,235,0.05)',borderWidth:2,pointRadius:1,fill:false,tension:0.3,yAxisID:'y2'},
+    {type:'line',label:'合計残高（運用込）',data:rows.map(function(r){return r.totalBal;}),borderColor:'#0d9488',backgroundColor:'rgba(13,148,136,0.07)',borderWidth:2,pointRadius:1,fill:true,tension:0.3,yAxisID:'y2'},
+  ]},options:chartOptions()});
 }
-
-function renderChartCompare(rows65, rowsDelay, kazDelay, yokoDelay) {
-  var ctx = document.getElementById('chart').getContext('2d');
-  if (myChart) { myChart.destroy(); myChart = null; }
-  document.getElementById('chartLegend').innerHTML =
-    '<span><span style="display:inline-block;width:10px;height:10px;background:#2563eb;border-radius:2px;margin-right:4px"></span>65歳受給・残高</span>' +
-    '<span><span style="display:inline-block;width:10px;height:10px;background:#7c3aed;border-radius:2px;margin-right:4px"></span>繰下げ受給・残高</span>';
-  myChart = new Chart(document.getElementById('chart').getContext('2d'), {
-    data: {
-      labels: rows65.map(function(r){ return r.y.toString(); }),
-      datasets: [
-        { type:'line', label:'65歳受給・残高', data: rows65.map(function(r){return r.bal;}), borderColor:'#2563eb', backgroundColor:'rgba(37,99,235,0.06)', borderWidth:2, pointRadius:1, fill:true, tension:0.3, yAxisID:'y2' },
-        { type:'line', label:'繰下げ・残高（和幸'+kazDelay+'歳/陽子'+yokoDelay+'歳）', data: rowsDelay.map(function(r){return r.bal;}), borderColor:'#7c3aed', backgroundColor:'rgba(124,58,237,0.06)', borderWidth:2, pointRadius:1, fill:true, tension:0.3, yAxisID:'y2' }
-      ]
-    },
-    options: chartOptions2()
-  });
+function renderChartCompare(r65,rDelay,kd,yd){
+  var ctx=document.getElementById('chart').getContext('2d');
+  if(myChart){myChart.destroy();myChart=null;}
+  document.getElementById('chartLegend').innerHTML=
+    '<span><span style="display:inline-block;width:10px;height:10px;background:#2563eb;border-radius:2px;margin-right:4px"></span>65歳受給</span>'+
+    '<span><span style="display:inline-block;width:10px;height:10px;background:#7c3aed;border-radius:2px;margin-right:4px"></span>繰下げ受給</span>';
+  myChart=new Chart(ctx,{data:{labels:r65.map(function(r){return r.y.toString();}),datasets:[
+    {type:'line',label:'65歳受給・残高',data:r65.map(function(r){return r.cashBal;}),borderColor:'#2563eb',backgroundColor:'rgba(37,99,235,0.06)',borderWidth:2,pointRadius:1,fill:true,tension:0.3,yAxisID:'y2'},
+    {type:'line',label:'繰下げ・残高（和幸'+kd+'歳/陽子'+yd+'歳）',data:rDelay.map(function(r){return r.cashBal;}),borderColor:'#7c3aed',backgroundColor:'rgba(124,58,237,0.06)',borderWidth:2,pointRadius:1,fill:true,tension:0.3,yAxisID:'y2'},
+  ]},options:chartOptions2()});
 }
-
-function chartOptions() {
-  return {
-    responsive: true, maintainAspectRatio: false,
-    interaction: { mode:'index', intersect:false },
-    plugins: { legend:{ display:false } },
-    scales: {
-      x:  { ticks:{ font:{size:10}, color:'#667', maxRotation:45 }, grid:{ color:'#eee' } },
-      y:  { position:'left',  ticks:{ font:{size:10}, color:'#667',    callback:function(v){return v+'万';} }, grid:{ color:'#eee' } },
-      y2: { position:'right', ticks:{ font:{size:10}, color:'#2563eb', callback:function(v){return v+'万';} }, grid:{ display:false } }
-    }
-  };
+function renderChartInvest(s0,s1,s2,s3){
+  var ctx=document.getElementById('chart').getContext('2d');
+  if(myChart){myChart.destroy();myChart=null;}
+  document.getElementById('chartLegend').innerHTML=
+    '<span><span style="display:inline-block;width:10px;height:10px;background:#94a3b8;border-radius:2px;margin-right:4px"></span>運用なし</span>'+
+    '<span><span style="display:inline-block;width:10px;height:10px;background:#2563eb;border-radius:2px;margin-right:4px"></span>保守型</span>'+
+    '<span><span style="display:inline-block;width:10px;height:10px;background:#16a34a;border-radius:2px;margin-right:4px"></span>標準型</span>'+
+    '<span><span style="display:inline-block;width:10px;height:10px;background:#7c3aed;border-radius:2px;margin-right:4px"></span>積極型</span>';
+  myChart=new Chart(ctx,{data:{labels:s0.map(function(r){return r.y.toString();}),datasets:[
+    {type:'line',label:'運用なし',data:s0.map(function(r){return r.totalBal;}),borderColor:'#94a3b8',borderWidth:2,pointRadius:1,fill:false,tension:0.3,yAxisID:'y2'},
+    {type:'line',label:'保守型',data:s1.map(function(r){return r.totalBal;}),borderColor:'#2563eb',borderWidth:2,pointRadius:1,fill:false,tension:0.3,yAxisID:'y2'},
+    {type:'line',label:'標準型',data:s2.map(function(r){return r.totalBal;}),borderColor:'#16a34a',borderWidth:2,pointRadius:1,fill:false,tension:0.3,yAxisID:'y2'},
+    {type:'line',label:'積極型',data:s3.map(function(r){return r.totalBal;}),borderColor:'#7c3aed',borderWidth:2,pointRadius:1,fill:false,tension:0.3,yAxisID:'y2'},
+  ]},options:chartOptions2()});
 }
-
-function chartOptions2() {
-  return {
-    responsive: true, maintainAspectRatio: false,
-    interaction: { mode:'index', intersect:false },
-    plugins: { legend:{ display:false } },
-    scales: {
-      x:  { ticks:{ font:{size:10}, color:'#667', maxRotation:45 }, grid:{ color:'#eee' } },
-      y2: { position:'right', ticks:{ font:{size:10}, color:'#667', callback:function(v){return v+'万';} }, grid:{ color:'#eee' } }
-    }
-  };
+function chartOptions(){return{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:{display:false}},scales:{x:{ticks:{font:{size:10},color:'#667',maxRotation:45},grid:{color:'#eee'}},y:{position:'left',ticks:{font:{size:10},color:'#667',callback:function(v){return v+'万';}},grid:{color:'#eee'}},y2:{position:'right',ticks:{font:{size:10},color:'#0d9488',callback:function(v){return v+'万';}},grid:{display:false}}}};}
+function chartOptions2(){return{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:{display:false}},scales:{x:{ticks:{font:{size:10},color:'#667',maxRotation:45},grid:{color:'#eee'}},y2:{position:'right',ticks:{font:{size:10},color:'#667',callback:function(v){return v+'万';}},grid:{color:'#eee'}}}};}
+function switchTab(tab){
+  currentTab=tab;
+  ['current','compare','invest'].forEach(function(t){document.getElementById('tab-'+t).className='chart-tab'+(t===tab?' active':'');});
+  var kd=sel('kazDelay'),yd=sel('yokoDelay');
+  if(tab==='current')renderChartSingle(lastRowsDelay.length?lastRowsDelay:[]);
+  else if(tab==='compare')renderChartCompare(lastRows65,lastRowsDelay,kd,yd);
+  else{
+    var s0=calcRows(kd,yd,null);
+    var s1=calcRows(kd,yd,deepCopyInvest(PRESETS_TO_CONFIG('conservative')));
+    var s2=calcRows(kd,yd,deepCopyInvest(PRESETS_TO_CONFIG('standard')));
+    var s3=calcRows(kd,yd,deepCopyInvest(PRESETS_TO_CONFIG('aggressive')));
+    renderChartInvest(s0,s1,s2,s3);
+  }
 }
-
-function switchTab(tab) {
-  currentTab = tab;
-  document.getElementById('tab-current').className = 'chart-tab' + (tab === 'current' ? ' active' : '');
-  document.getElementById('tab-compare').className = 'chart-tab' + (tab === 'compare' ? ' active' : '');
-  if (tab === 'current') renderChartSingle(lastRowsDelay);
-  else renderChartCompare(lastRows65, lastRowsDelay, sel('kazDelay'), sel('yokoDelay'));
-}
-
-document.querySelectorAll('input, select').forEach(function(el){
-  el.addEventListener('change', calc);
-});
-
+document.querySelectorAll('input, select').forEach(function(el){el.addEventListener('change',calc);});
 calc();
 </script>
 </body>
